@@ -1,0 +1,15 @@
+{
+  "env": {
+    "node": true
+  },
+  "root": true,
+  "extends": [
+    "airbnb-base",
+    "plugin:jest/recommended",
+    "plugin:node/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "rules": {
+    "max-len": ["error",100,2]
+  }
+}

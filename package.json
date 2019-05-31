@@ -1,0 +1,30 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "lint": "eslint --debug src/",
+    "lint:write": "eslint --debug packages/ --fix",
+    "prettier": "prettier --write packages/**/*.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm test"
+    }
+  },
+  "lint-staged": {
+    "*.(js)": ["npm run lint:write", "git add"]
+  },
+  "devDependencies": {
+    "editorconfig": "^0.15.3",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-jest": "^22.6.4",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "husky": "^2.3.0",
+    "lerna": "^3.13.4",
+    "lint-staged": "^8.1.7",
+    "prettier": "^1.17.1"
+  }
+}
