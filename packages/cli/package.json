@@ -1,9 +1,13 @@
 {
-  "name": "@bbm/cli",
+  "name": "bbm-cli",
   "version": "0.2.0",
   "description": "demo",
   "bin": {
     "bbm": "bin/bbm.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/athenabbm/bbm-cli"
   },
   "directories": {
     "lib": "lib"
@@ -48,6 +52,5 @@
     "node": ">=8.9"
   },
   "author": "",
-  "license": "ISC",
-  "gitHead": "4ce622f150c263221d352d3551ff914b40efedd5"
+  "license": "ISC"
 }
