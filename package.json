@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "private": true,
+  "public": true,
   "scripts": {
     "lint": "eslint --debug packages/",
     "lint:write": "eslint --debug packages/ --fix",

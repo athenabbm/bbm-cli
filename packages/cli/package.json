@@ -1,6 +1,6 @@
 {
   "name": "@bbm/cli",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.1",
   "description": "demo",
   "bin": {
     "bbm": "bin/bbm.js"
@@ -48,5 +48,6 @@
     "node": ">=8.9"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "gitHead": "cfe625bb0d7f500b4eac8774051f41afdbf48cb7"
 }
