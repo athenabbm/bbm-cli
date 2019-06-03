@@ -1,21 +1,30 @@
-const chalk = require('chalk')
-const semver = require('semver')
-const requiredVersion = require('../package.json').engines.node
-const didYouMean = require('didyoumean')
-const minimist = require('minimist');
-didYouMean.threshold = 0.6
+#!/usr/bin/env node
 
-const program = require('commander');
+"use strict";
 
-program
-  .version(require('../package').version)
-  .usage('<command> [options]');
+const program = require("commander");
+const { pick } = require("../lib/utils/transformCode");
+
+program.version(require("../package").version).usage("<command> [options]");
 
 program
-  .command('create <app-name>')
-  .description('创建')
-  .action((name,cmd) => {
-    require('../lib/create')(name)
-  })
+  .command("generate")
+  .alias("g")
+  .description("创建")
+  .option("--diff", "开启diff")
+  .option("-F, --force", "强制生成，不会比较文件！")
+  .option("-S, --src <src>", "自定义语言文件编辑目录")
+  .option("-D, --dest <dest>", "自定义语言文件存放目录")
+  .option("-C, --context <context>", "context")
+  .action((name, cmd) => {
+    if (!cmd) {
+      cmd = name;
+      name = null;
+    }
+    require("../lib/create")(
+      name,
+      pick(cmd, ["src", "dest", "context", "diff", "force"])
+    );
+  });
 
-program.parse(process.argv)
+program.parse(process.argv);

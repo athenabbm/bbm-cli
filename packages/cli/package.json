@@ -9,14 +9,17 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node bin/bbm.js g -C test --diff"
   },
   "dependencies": {
+    "babel-core": "^6.26.3",
     "chalk": "^2.4.1",
     "commander": "^2.20.0",
     "debug": "^4.1.0",
     "deepmerge": "^3.2.0",
     "didyoumean": "^1.2.1",
+    "diff": "^4.0.1",
+    "diff-lines": "^1.1.0",
     "download-git-repo": "^1.0.2",
     "ejs": "^2.6.1",
     "envinfo": "^7.2.0",
