@@ -57,6 +57,7 @@ class Generator {
     }
     if (typeof to !== "object") {
       console.log(chalk.red("配置错误！"));
+      console.log(chalk.red(to));
       return;
     }
 
@@ -79,6 +80,7 @@ class Generator {
   diffFile(text, filename) {
     // 当强制更新时直接返回
     if (this.force) return true;
+    if (!fs.pathExistsSync(filename)) return true;
     const value = fs.readFileSync(filename, "utf8");
     // 当目标目录内容小于自己书写目录时不需要diff
     if (value.length < text.length && !this.diff) {

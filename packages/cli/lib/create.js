@@ -3,6 +3,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const Generator = require("./Generator");
+const { defaults } = require('./utils/util');
 
 const defaultConfig = {
   src: "language",
@@ -12,7 +13,7 @@ const defaultConfig = {
   force: false
 };
 async function create(name, options = {}) {
-  const config = Object.assign({}, defaultConfig, options);
+  const config = defaults(defaultConfig, options);
 
   const cwd = config.context;
   if (name) {
