@@ -58,5 +58,6 @@
     "node": ">=8.9"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "gitHead": "d2d4ea50e1ae15658d460a21b20007567903a4b7"
 }

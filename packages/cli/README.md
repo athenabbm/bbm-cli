@@ -1,20 +1,29 @@
-### example
+# bbm-cli
 
+## Getting Started
 ```
 npm install -g bbm-cli
 
-bbm g filename -C test --src language --dest testDest
-
--C / --context 表示目录搜索的根路径
-
--S / --src 表示语言文件的目录
-
--D / --Dest 生成到的目录
-
--F / --force 强制生成
-
---diff 强制比较文件是否变动
-
-
-
 ```
+package.json 添加配置
+```
+"bbm": {
+  src: "",
+  dest: ""
+}
+```
+## Options
+name|alias|type|Default|Description
+--- |:--: |:--:| :--:  |---:
+src | S   |string| language | 语言书写的目录
+dest| D   |string| dest     | 语言生成的目录
+cwd | C   |string| process.cwd() | 默认项目的根目录
+diff| none|boolean| false | 是否强制diff，为true无论何时都会diff
+force| -F |boolean| false | 是否强制生成，为true会跳过diff后直接覆盖
+
+
+
+
+
+
+
