@@ -16,9 +16,9 @@
     "test": "node bin/bbm.js g -C test --diff"
   },
   "bbm": {
-    "src":"test/language",
-    "dest":"test/destpkg",
-    "diff":true
+    "src": "test/language",
+    "dest": "test/destpkg",
+    "diff": true
   },
   "dependencies": {
     "babel-core": "^6.26.3",
