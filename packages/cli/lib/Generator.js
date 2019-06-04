@@ -2,15 +2,22 @@ const path = require("path");
 const fs = require("fs-extra");
 const chalk = require("chalk");
 const Diff = require("diff");
+const inquirer = require('inquirer');
 const transformCode = require("./utils/transformCode");
-const { languageList } = require("./utils/const");
+const {languageList} = require("./utils/const");
 
 class Generator {
-  constructor(
-    name,
-    { src, dest, context, diff, force, languages = languageList }
-  ) {
-    this.name = /\.js$/.test(name) ? name : `${name}.js`;
+  constructor(name, {
+    src,
+    dest,
+    context,
+    diff,
+    force,
+    languages = languageList
+  }) {
+    this.name = /\.js$/.test(name)
+      ? name
+      : `${name}.js`;
     this.from = src;
     this.to = dest;
     this.context = context || process.cwd();
@@ -35,73 +42,111 @@ class Generator {
   _appendExport(filename, value) {
     fs.ensureFileSync(filename);
     const contentText = fs.readFileSync(filename, "utf-8");
-    if (contentText.includes(value)) return;
-    fs.appendFileSync(filename, `\r\n${value};`, { encoding: "utf8" });
+    if (contentText.includes(value))
+      return;
+    fs.appendFileSync(filename, `\r\n${value};`, {encoding: "utf8"});
   }
 
-  generage() {
+  async generage() {
     if (!this.text) {
       const srcFile = path.resolve(this.context, this.from, this.name);
       console.log(chalk.red(`${srcFile}内容为空`));
       return;
     }
-    let { to } = this;
+    let {to} = this;
     if (typeof to === "string") {
-      to = this.languages.reduce(
-        (pre, key) => ({
+      to = this
+        .languages
+        .reduce((pre, key) => ({
           ...pre,
           [key]: path.resolve(this.context, to, key)
-        }),
-        {}
-      );
+        }), {});
     }
     if (typeof to !== "object") {
-      console.log(chalk.red("配置错误！"));
+      console.log(chalk.red("desc目录配置错误！"));
       console.log(chalk.red(to));
       return;
     }
 
-    this.languages.forEach(key => {
+    for (let index = 0; index < this.languages.length; index++) {
+      const key = this.languages[index];
       const filename = path.join(to[key], this.name);
       const text = this.transformText[key];
-      if (!this.diffFile(text, filename)) {
-        return;
+      // 当强制更新时不需要diff
+      if (!this.force) {
+        let isContinue = await this.diffFile(text, filename)
+        if (!isContinue) {
+          continue;
+        }
       }
       fs.ensureDirSync(to[key]);
       fs.writeFileSync(filename, text);
       console.log(chalk.green(`${filename}生成完成！`));
-      this._appendExport(
-        path.join(to[key], "index.js"),
-        `export ${this.name.slice(0, -3)} from "./${this.name}"`
-      );
-    });
+      this._appendExport(path.join(to[key], "index.js"), `export ${this.name.slice(0, -3)} from "./${this.name}"`);
+    }
   }
 
-  diffFile(text, filename) {
-    // 当强制更新时直接返回
-    if (this.force) return true;
-    if (!fs.pathExistsSync(filename)) return true;
-    const value = fs.readFileSync(filename, "utf8");
-    // 当目标目录内容小于自己书写目录时不需要diff
+  /**
+   * 返回true就会生成
+   * @param {string} text
+   * @param {*} filename
+   */
+  async diffFile(text, filename) {
+    // 目标文件不存在，不需要diff直接生成
+    if (!fs.pathExistsSync(filename))
+      return true;
+    let value = fs.readFileSync(filename, "utf8");
+    // 没有强制diff时，当目标目录内容小于自己书写目录时不需要diff
     if (value.length < text.length && !this.diff) {
       return true;
     }
-    const diff = Diff.diffLines(text, value);
+    const diff = Diff.diffLines(text, value, {ignoreWhitespace: true,newlineIsToken: true});
     let isSame = true;
 
-    diff.forEach(function(part) {
+    diff.forEach(function (part) {
       // green for additions, red for deletions grey for common parts
-      const color = part.added ? "red" : part.removed ? "green" : "grey";
+      const color = part.added
+        ? "red"
+        : part.removed
+          ? "green"
+          : "grey";
       if (color === "grey") {
         return;
       }
       isSame = false;
-      console.log(chalk[color](`${filename}:\n${part.value}`));
+      console.log(chalk[color](`${part.value}`));
     });
-    isSame
-      ? console.log(chalk.grey(`${filename}文件没有变动`))
-      : console.log(chalk.red(`可能会覆盖文件：${filename}`));
-    return !isSame;
+    if (isSame) {
+      console.log(chalk.grey(`${filename}文件没有变动`))
+      return false;
+    }
+
+    let needRun = false;
+
+    if (value.length > text.length) {
+      console.log(chalk.red(`${filename}有改动，是否覆盖`));
+      const {action} = await inquirer.prompt([
+        {
+          type: 'list',
+          message: '继续选择true，跳过选择false',
+          name: 'action',
+          choices: [
+            {
+              name: 'true',
+              value: true
+            }, {
+              name: 'false',
+              value: false
+            }
+          ]
+        }
+      ])
+      needRun = action
+      if (!action) {
+        console.log(chalk.green(`跳过${filename}的生成`))
+      }
+    }
+    return needRun;
   }
 }
 
