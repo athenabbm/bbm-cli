@@ -15,7 +15,7 @@ program
   .option("-F, --force", "强制生成，不会比较文件！")
   .option("-S, --src <src>", "自定义语言文件编辑目录")
   .option("-D, --dest <dest>", "自定义语言文件存放目录")
-  .option("-C, --context <context>", "context")
+  .option("-C, --cwd <cwd>", "cwd")
   .action((name, cmd) => {
     if (!cmd) {
       cmd = name;
@@ -23,7 +23,7 @@ program
     }
     require("../lib/create")(
       name,
-      pick(cmd, ["src", "dest", "context", "diff", "force"])
+      pick(cmd, ["src", "dest", "cwd", "diff", "force"])
     );
   });
 

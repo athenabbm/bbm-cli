@@ -3,19 +3,18 @@
 const fs = require("fs-extra");
 const path = require("path");
 const Generator = require("./Generator");
-const { defaults } = require('./utils/util');
+const defaults = require('lodash.defaults');
 
 const defaultConfig = {
   src: "language",
   dest: "dest",
-  context: process.cwd(),
   diff: false,
   force: false
 };
 async function create(name, options = {}) {
-  const config = defaults(defaultConfig, options);
-
-  const cwd = config.context;
+  const cwd = options.cwd || process.cwd();
+  const pkgOpts = require(path.join(cwd,'package.json')).bbm || {}
+  const config = defaults(options,pkgOpts,defaultConfig);
   if (name) {
     const generate = new Generator(name, config);
     generate.generage();

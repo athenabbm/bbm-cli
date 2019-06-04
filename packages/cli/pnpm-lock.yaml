@@ -20,6 +20,7 @@ dependencies:
   js-yaml: 3.13.1
   jscodeshift: 0.6.4
   lodash.clonedeep: 4.5.0
+  lodash.defaults: 4.2.0
   minimist: 1.2.0
   recast: 0.18.1
   request: 2.88.0
@@ -2876,6 +2877,11 @@ packages:
     resolution:
       integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
       tarball: lodash.clonedeep/download/lodash.clonedeep-4.5.0.tgz
+  /lodash.defaults/4.2.0:
+    dev: false
+    resolution:
+      integrity: sha1-0JF4cW/+pN3p5ft7N/bwgCJ0WAw=
+      tarball: lodash.defaults/download/lodash.defaults-4.2.0.tgz
   /lodash/4.17.11:
     dev: false
     resolution:
@@ -4314,6 +4320,7 @@ specifiers:
   js-yaml: ^3.13.1
   jscodeshift: ^0.6.4
   lodash.clonedeep: ^4.5.0
+  lodash.defaults: ^4.2.0
   minimist: ^1.2.0
   recast: ^0.18.1
   request: ^2.87.0
