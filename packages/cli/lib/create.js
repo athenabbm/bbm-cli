@@ -4,13 +4,9 @@ const fs = require("fs-extra");
 const path = require("path");
 const Generator = require("./Generator");
 const defaults = require('lodash.defaults');
+const { defaultConfig } = require('./utils/const')
 
-const defaultConfig = {
-  src: "language",
-  dest: "dest",
-  diff: false,
-  force: false
-};
+
 async function create(name, options = {}) {
   const cwd = options.cwd || process.cwd();
   const pkgOpts = require(path.join(cwd,'package.json')).bbm || {}

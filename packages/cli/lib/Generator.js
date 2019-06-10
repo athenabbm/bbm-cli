@@ -1,10 +1,12 @@
+"use strict";
+
 const path = require("path");
 const fs = require("fs-extra");
 const chalk = require("chalk");
 const Diff = require("diff");
 const inquirer = require('inquirer');
 const transformCode = require("./utils/transformCode");
-const {languageList} = require("./utils/const");
+
 
 class Generator {
   constructor(name, {
@@ -13,7 +15,7 @@ class Generator {
     context,
     diff,
     force,
-    languages = languageList
+    language
   }) {
     this.name = /\.js$/.test(name)
       ? name
@@ -24,7 +26,7 @@ class Generator {
     this.text = this._read();
     this.diff = diff;
     this.force = force;
-    this.languages = languages;
+    this.languages = language;
     if (this.text) {
       this.transformText = transformCode(this.text, languages);
     }

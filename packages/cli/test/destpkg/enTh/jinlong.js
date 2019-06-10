@@ -1,4 +1,5 @@
 export default  {
     //泰文
-    a: ""
+    a: "",
+    b: 'tw',
   }
