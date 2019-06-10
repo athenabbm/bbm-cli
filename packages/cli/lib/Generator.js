@@ -28,7 +28,7 @@ class Generator {
     this.force = force;
     this.languages = language;
     if (this.text) {
-      this.transformText = transformCode(this.text, languages);
+      this.transformText = transformCode(this.text, language);
     }
   }
 
