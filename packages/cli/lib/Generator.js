@@ -15,7 +15,7 @@ class Generator {
     context,
     diff,
     force,
-    language
+    languages
   }) {
     this.name = /\.js$/.test(name)
       ? name
@@ -26,9 +26,9 @@ class Generator {
     this.text = this._read();
     this.diff = diff;
     this.force = force;
-    this.languages = language;
+    this.languages = languages;
     if (this.text) {
-      this.transformText = transformCode(this.text, language);
+      this.transformText = transformCode(this.text, languages);
     }
   }
 
