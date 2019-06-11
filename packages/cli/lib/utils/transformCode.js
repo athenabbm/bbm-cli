@@ -80,9 +80,10 @@ function parse(keys, value, leadingComments) {
             .node
             .properties
             .forEach(node => {
-              keys.push(node.key)
-              value[node.key.name] = node.value
-              leadingComments[node.key.name] = node.leadingComments
+              keys.push(node.key);
+              let dataIndex = node.key.name || node.key.value;
+              value[dataIndex] = node.value;
+              leadingComments[dataIndex] = node.leadingComments
             })
         }
       }
@@ -129,9 +130,10 @@ function parseLanguage(values) {
       t.objectProperty(k,
         t.objectExpression(
           languageList.map(lan => {
-            let node = t.objectProperty(t.identifier(lan), valmap[lan][k.name]);
-            if (leadingCommentsMap[lan][k.name]) {
-              let comments = leadingCommentsMap[lan][k.name][0];
+            let dataIndex = k.name || k.value;
+            let node = t.objectProperty(t.identifier(lan), valmap[lan][dataIndex]);
+            if (leadingCommentsMap[lan][dataIndex]) {
+              let comments = leadingCommentsMap[lan][dataIndex][0];
               let loc = comments.loc;
               let start = comments.start;
               let end = comments.end;
@@ -168,6 +170,7 @@ function parseLanguage(values) {
 
               node.leadingComments = [comments]
             }
+            // console.log([k.name])
             return node;
           })
         )
