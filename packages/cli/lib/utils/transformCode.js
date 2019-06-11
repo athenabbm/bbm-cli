@@ -71,7 +71,7 @@ function transformCode(code, languageList) {
   }, {});
 }
 
-function parse(keys, value) {
+function parse(keys, value, leadingComments) {
   return function transform({types: t}) {
     return {
       visitor: {
@@ -82,6 +82,7 @@ function parse(keys, value) {
             .forEach(node => {
               keys.push(node.key)
               value[node.key.name] = node.value
+              leadingComments[node.key.name] = node.leadingComments
             })
         }
       }
@@ -105,12 +106,14 @@ function parseLanguage(values) {
   let languageList = Object.keys(values);
   let keys = [];
   let valmap = {}
+  let leadingCommentsMap = {}
   languageList.forEach(key => {
     let ks = []
     valmap[key] = {}
+    leadingCommentsMap[key] = {}
     babel.transform(values[key], {
       plugins: [
-        [parse(ks, valmap[key])]
+        [parse(ks, valmap[key], leadingCommentsMap[key])]
       ]
     });
     if (ks.length > keys.length) {
@@ -118,9 +121,58 @@ function parseLanguage(values) {
     }
   })
 
-  let objectProperty = []
+  let objectProperty = [];
+  let totalLineLen = 0;
+  let totalLen = 0;
   keys.forEach(k => {
-    objectProperty.push(t.objectProperty(k, t.objectExpression(languageList.map(lan => t.objectProperty(t.identifier(lan), valmap[lan][k.name])))))
+    objectProperty.push(
+      t.objectProperty(k,
+        t.objectExpression(
+          languageList.map(lan => {
+            let node = t.objectProperty(t.identifier(lan), valmap[lan][k.name]);
+            if (leadingCommentsMap[lan][k.name]) {
+              let comments = leadingCommentsMap[lan][k.name][0];
+              let loc = comments.loc;
+              let start = comments.start;
+              let end = comments.end;
+
+              let lineStart = loc.start.line
+              let lineEnd = loc.end.line
+
+              let len = end - start;
+              let lineLen = lineEnd - lineStart;
+
+              totalLineLen += lineLen;
+              totalLen += len;
+
+
+              let value =  node.value;
+
+              value.loc.start.line += totalLineLen
+              value.loc.end.line += totalLineLen
+              value.start += totalLen;
+              value.end += totalLen;
+
+              start = value.start - len - lan.length - 1;
+              end = value.start - lan.length - 1;
+
+
+
+
+              let valueLine = value.loc.start.line;
+              loc.start.line = valueLine - 1 - (lineLen)
+              loc.end.line = valueLine - 1
+
+              comments.start = start;
+              comments.end = end;
+
+              node.leadingComments = [comments]
+            }
+            return node;
+          })
+        )
+      )
+    )
 
   })
   let {ast} = babel.transform('module.exports = {}', {
