@@ -112,11 +112,16 @@ class Generator {
         : part.removed
           ? "green"
           : "grey";
+      const prefix = part.added
+      ? "--"
+      : part.removed
+        ? "++"
+        : "";
       if (color === "grey") {
         return;
       }
       isSame = false;
-      console.log(chalk[color](`${part.value}`));
+      console.log(chalk[color](`${prefix} ${part.value}`));
     });
     if (isSame) {
       console.log(chalk.grey(`${filename}文件没有变动`))
@@ -125,7 +130,7 @@ class Generator {
 
     let needRun = false;
 
-    if (value.length > text.length) {
+    if (!text.includes(value)) {
       console.log(chalk.red(`${filename}有改动，是否覆盖`));
       const {action} = await inquirer.prompt([
         {
