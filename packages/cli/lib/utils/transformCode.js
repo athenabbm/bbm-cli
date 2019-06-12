@@ -61,12 +61,19 @@ function transformCode(code, languageList) {
   const text = babel
     .transformFromAst(ast, null)
     .code;
-
-  return languageList.reduce((pre, languageKey) => {
-    const reg = new RegExp(`(${languageKey})\\s*:([\\w\\W]+?})`);
+  let startIndex = 0,endIndx = 0, len = languageList.length;
+  return languageList.reduce((pre, languageKey,index) => {
+    if (index < len - 1) {
+      endIndx = text.indexOf(languageList[index+1])
+    }else {
+      endIndx = -3;
+    }
+    const reg = new RegExp(`(${languageKey})\\s*:([\\w\\W]+})`);
+    let finalText = text.slice(startIndex,endIndx);
+    startIndex = endIndx
     return {
       ...pre,
-      [languageKey]: `export default ${text.match(reg)[2]}`
+      [languageKey]: `export default ${finalText.match(reg)[2]}`
     };
   }, {});
 }
