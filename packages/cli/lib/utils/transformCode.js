@@ -16,7 +16,7 @@ function transform() {
     const result = {};
     return {
       visitor: {
-        'AssignmentExpression|ExportDefaultDeclaration': {
+        'AssignmentExpression': {
           enter(path) {
             path
               .node
@@ -41,7 +41,7 @@ function transform() {
             path
               .parentPath
               .replaceWith(t.objectExpression(opts.languageList.filter(key => !!result[key]).map(key => {
-                return t.objectProperty(t.identifier(key), t.objectExpression(result[key]));
+                return t.objectProperty(t.identifier(opts.languageKeyMap[key]), t.objectExpression(result[key]));
               })));
           }
         }
@@ -51,10 +51,12 @@ function transform() {
 }
 
 function transformCode(code, languageList) {
+  const languageKeyMap = languageList.reduce((res,key) => ({[key]: `<LANGUAGE>${key}</LANGUAGE>`,...res}),{})
   const {ast} = babel.transform(code, {
     plugins: [
       [transform(), {
-          languageList
+          languageList,
+          languageKeyMap
         }]
     ]
   });
@@ -63,12 +65,13 @@ function transformCode(code, languageList) {
     .code;
   let startIndex = 0,endIndx = 0, len = languageList.length;
   return languageList.reduce((pre, languageKey,index) => {
+    let matchKey = languageKeyMap[languageList[index]]
     if (index < len - 1) {
-      endIndx = text.indexOf(languageList[index+1])
+      endIndx = text.indexOf(languageKeyMap[languageList[index+1]])
     }else {
       endIndx = -3;
     }
-    const reg = new RegExp(`(${languageKey})\\s*:([\\w\\W]+})`);
+    const reg = new RegExp(`(${matchKey})\\s*:([\\w\\W]+})`);
     let finalText = text.slice(startIndex,endIndx);
     startIndex = endIndx
     return {
@@ -177,7 +180,6 @@ function parseLanguage(values) {
 
               node.leadingComments = [comments]
             }
-            // console.log([k.name])
             return node;
           })
         )
